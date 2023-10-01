@@ -7,9 +7,14 @@ def main(pages):
 
     userName = ft.TextField(label="write your name")
 
-    def sendMessage(e):
-        chat.controls.append(ft.Text(mensageField.value))
+    def sendTunnelMessage(message):
+        chat.controls.append(ft.Text(message))
+        pages.update()
 
+    pages.pubsub.subscribe(sendTunnelMessage)
+
+    def sendMessage(e):
+        pages.pubsub.send_all(mensageField.value)
         mensageField.value = ""
         pages.update()
 
