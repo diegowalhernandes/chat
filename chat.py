@@ -8,16 +8,22 @@ def main(pages):
     userName = ft.TextField(label="write your name")
 
     def sendTunnelMessage(message):
-        textMessage = message["text"]
-        userMessage = message["user"]
+        tipo = message["tipo"]
+        if tipo == "message":
+            textMessage = message["text"]
+            userMessage = message["user"]
 
-        chat.controls.append(ft.Text(f"{userMessage} : {textMessage}"))
+            chat.controls.append(ft.Text(f"{userMessage} : {textMessage}"))
+        else:
+            userMessage = message["user"]
+            chat.controls.append(ft.Text(f"{userMessage} entrou no chat", size=12, italic=True, color=ft.colors.AMBER_700))
         pages.update()
 
     pages.pubsub.subscribe(sendTunnelMessage)
 
     def sendMessage(e):
-        pages.pubsub.send_all({"text": mensageField.value, "user": userName.value})
+        pages.pubsub.send_all({"text": mensageField.value, "user": userName.value,
+                               "tipo": "message"})
         mensageField.value = ""
         pages.update()
 
@@ -25,6 +31,7 @@ def main(pages):
     sendMessageButton = ft.ElevatedButton("Send", on_click=sendMessage)
 
     def enterModal(e):
+        pages.pubsub.send_all({"user": userName.value, "tipo": "entrada"})
         pages.add(chat)
         modal.open = False
         pages.remove(buttonInit)
