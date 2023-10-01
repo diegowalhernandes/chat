@@ -8,13 +8,16 @@ def main(pages):
     userName = ft.TextField(label="write your name")
 
     def sendTunnelMessage(message):
-        chat.controls.append(ft.Text(message))
+        textMessage = message["text"]
+        userMessage = message["user"]
+
+        chat.controls.append(ft.Text(f"{userMessage} : {textMessage}"))
         pages.update()
 
     pages.pubsub.subscribe(sendTunnelMessage)
 
     def sendMessage(e):
-        pages.pubsub.send_all(mensageField.value)
+        pages.pubsub.send_all({"text": mensageField.value, "user": userName.value})
         mensageField.value = ""
         pages.update()
 
